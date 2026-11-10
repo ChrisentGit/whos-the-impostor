@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../../../packages/shared/src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CREW
+  IMPOSTOR
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum MatchResult {
+  CREW_WIN
+  IMPOSTOR_WIN
+  ABANDONED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  players       Player[]
+  createdAt     DateTime  @default(now())
+}
+
+// Auth.js models
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Game models
+
+model Player {
+  id          String        @id @default(cuid())
+  displayName String
+  userId      String?
+  user        User?         @relation(fields: [userId], references: [id])
+  matches     MatchPlayer[]
+  createdAt   DateTime      @default(now())
+}
+
+model Theme {
+  id       String     @id @default(cuid())
+  slug     String     @unique
+  name     String
+  isActive Boolean    @default(true)
+  pairs    WordPair[]
+}
+
+model WordPair {
+  id         String     @id @default(cuid())
+  themeId    String
+  theme      Theme      @relation(fields: [themeId], references: [id])
+  wordA      String
+  wordB      String
+  language   String     @default("en")
+  difficulty Difficulty @default(MEDIUM)
+  approved   Boolean    @default(false)
+  matches    Match[]
+
+  @@unique([themeId, wordA, wordB])
+}
+
+model Room {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  hostId    String
+  settings  Json
+  matches   Match[]
+  createdAt DateTime  @default(now())
+  closedAt  DateTime?
+}
+
+model Match {
+  id        String        @id @default(cuid())
+  roomId    String
+  room      Room          @relation(fields: [roomId], references: [id])
+  pairId    String
+  pair      WordPair      @relation(fields: [pairId], references: [id])
+  crewWord  String
+  decoyWord String
+  result    MatchResult?
+  players   MatchPlayer[]
+  rounds    Round[]
+  startedAt DateTime      @default(now())
+  endedAt   DateTime?
+}
+
+model MatchPlayer {
+  id           String  @id @default(cuid())
+  matchId      String
+  match        Match   @relation(fields: [matchId], references: [id])
+  playerId     String
+  player       Player  @relation(fields: [playerId], references: [id])
+  role         Role
+  eliminatedIn Int?
+  won          Boolean @default(false)
+
+  @@unique([matchId, playerId])
+}
+
+model Round {
+  id         String  @id @default(cuid())
+  matchId    String
+  match      Match   @relation(fields: [matchId], references: [id])
+  number     Int
+  clues      Clue[]
+  votes      Vote[]
+  eliminated String?
+
+  @@unique([matchId, number])
+}
+
+model Clue {
+  id        String   @id @default(cuid())
+  roundId   String
+  round     Round    @relation(fields: [roundId], references: [id])
+  playerId  String
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model Vote {
+  id       String  @id @default(cuid())
+  roundId  String
+  round    Round   @relation(fields: [roundId], references: [id])
+  voterId  String
+  targetId String? // null = skip
+
+  @@unique([roundId, voterId])
+}
