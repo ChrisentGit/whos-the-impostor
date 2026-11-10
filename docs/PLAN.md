@@ -292,11 +292,11 @@ Layout: 2×2 grid up to 4 players, 3×3 for 5–8; on phones, the active speaker
 Video only starts after a text-only game works in 4 browser tabs.
 
 ### Phase 0: Setup (week 1)
-- [ ] pnpm monorepo with `apps/web`, `apps/game-server`, `packages/shared`, `packages/engine`
-- [ ] ESLint, Prettier, strict TypeScript, Vitest wired up across workspaces
-- [ ] Prisma schema + first migration; seed script with 3 themes × 15 approved pairs
-- [ ] GitHub Actions: lint, typecheck, test on push and PR
-- [ ] `.env.example` with every variable
+- [x] pnpm monorepo with `apps/web`, `apps/game-server`, `packages/shared`, `packages/engine`
+- [x] ESLint, Prettier, strict TypeScript, Vitest wired up across workspaces
+- [x] Prisma schema + first migration; seed script with 3 themes × 15 approved pairs
+- [x] GitHub Actions: lint, typecheck, test on push and PR
+- [x] `.env.example` with every variable
 - **Done when:** `pnpm lint && pnpm typecheck && pnpm test` passes in CI.
 
 ### Phase 1: Game engine, no network (weeks 2–3)
