@@ -1,0 +1,25 @@
+node_modules/
+.next/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Generated Prisma client
+packages/shared/src/generated/
+
+# Playwright
+playwright-report/
+test-results/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.claude/

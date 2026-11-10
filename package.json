@@ -1,0 +1,32 @@
+{
+  "name": "whos-the-impostor",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @impostor/web --filter @impostor/game-server dev",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "e2e": "pnpm --filter @impostor/web e2e",
+    "db:generate": "pnpm --filter @impostor/web db:generate",
+    "db:migrate": "pnpm --filter @impostor/web db:migrate",
+    "db:seed": "pnpm --filter @impostor/web db:seed",
+    "postinstall": "pnpm db:generate"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.5",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.1.0"
+  }
+}
